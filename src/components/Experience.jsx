@@ -5,6 +5,10 @@ import { Robot } from './Robot'
 import gsap from 'gsap'
 import { phases, useAppStore } from '../stores/useAppStore'
 import { cameraPosition, controlsTarget } from '../data/camera'
+import DeliverScene from './DeliverScene'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function Experience() {
   const controlsRef = useRef()
@@ -41,6 +45,40 @@ export default function Experience() {
     )
   }, [phase])
 
+  useEffect(() => {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#section2",
+          start: "top bottom",
+          end: "top top",
+          scrub: true,
+        },
+      })
+      .to(controlsRef.current.target, {
+        x: controlsTarget.x.HOME_SECTION_2,
+        y: controlsTarget.y.HOME_SECTION_2,
+        z: controlsTarget.z.HOME_SECTION_2,
+        ease: "power2.inOut",
+      });
+
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: "#section2",
+          start: "top bottom",
+          end: "top top",
+          scrub: true,
+        },
+      })
+      .to(camera.position, {
+        x: cameraPosition.x.HOME_SECTION_2,
+        y: cameraPosition.y.HOME_SECTION_2,
+        z: cameraPosition.z.HOME_SECTION_2,
+        ease: "power2.inOut",
+      });
+  })
+
   return (
     <>
       <OrbitControls 
@@ -50,15 +88,16 @@ export default function Experience() {
         enableRotate={phase !== phases.HOME}
         enableZoom={phase !== phases.HOME}
         maxPolarAngle={Math.PI / 2}
-        maxDistance={15}
+        maxDistance={25}
       />
 
       <Environment preset="city" />
 
       <Robot />
+      <DeliverScene />
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} >
-        <planeGeometry args={[170, 170]} />
+        <planeGeometry args={[200, 200]} />
         <MeshReflectorMaterial
           blur={[300, 100]}
           mixBlur={0.5}

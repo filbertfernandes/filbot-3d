@@ -1,12 +1,29 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { useAppStore } from '../stores/useAppStore'
-import { DoubleSide } from 'three'
+import { DoubleSide, LoopOnce } from 'three'
 
 export function Robot(props) {
   const group = useRef()
   const { nodes, materials, animations } = useGLTF('/models/robot.glb')
   const { actions } = useAnimations(animations, group)
+
+  const isPlayAnimation = useAppStore((state) => state.isPlayAnimation) 
+  const setPlayAnimation = useAppStore((state) => state.setPlayAnimation) 
+
+  useEffect(() => {
+    if (!isPlayAnimation) return 
+
+    const action = actions.Animation
+    if (action) {
+      action.reset()
+      action.setLoop(LoopOnce, 1)
+      action.fadeIn(0.2)
+      action.clampWhenFinished = true
+      action.play()
+      setPlayAnimation(false)
+    }
+  }, [actions, isPlayAnimation])
 
   const filbotColors = useAppStore((state) => state.filbotColors)
 

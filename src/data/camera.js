@@ -1,16 +1,19 @@
 export const cameraPosition = {
     x: {
         HOME: -5.49,
+        HOME_SECTION_2: -4.936874753598429,
         CUSTOMIZE: 0.24579448347847954,
         FEATURES: 0.24579448347847954,
     },
     y: {
         HOME: 3.6,
+        HOME_SECTION_2: 11.294531383994077,
         CUSTOMIZE: 3.898593615945031,
         FEATURES: 3.898593615945031,
     },
     z: {
         HOME: 7.03,
+        HOME_SECTION_2: 45.408613505608145,
         CUSTOMIZE: 9.036006682875162,
         FEATURES: 9.036006682875162,
     }
@@ -19,16 +22,19 @@ export const cameraPosition = {
 export const controlsTarget = {
     x: {
         HOME: 3.1271897394894195,
+        HOME_SECTION_2: 7.372610309467353,
         CUSTOMIZE: 0.20441110938811566,
         FEATURES: 0.20441110938811566,
     },
     y: {
         HOME: 1.9258244781726472,
+        HOME_SECTION_2: 9.792860939706488,
         CUSTOMIZE: 2.3568463615030535,
         FEATURES: 2.3568463615030535,
     },
     z: {
         HOME: 1.846361435585223,
+        HOME_SECTION_2: 44.09502983217817,
         CUSTOMIZE: 0,
         FEATURES: 0,
     }

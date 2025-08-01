@@ -4,6 +4,7 @@ const Customize = () => {
     const phase = useAppStore((state) => state.phase)
     const filbotColors = useAppStore((state) => state.filbotColors)
     const setFilbotColors = useAppStore((state) => state.setFilbotColors)
+    const setPlayAnimation = useAppStore((state) => state.setPlayAnimation)
 
     const handleColorChange = (part, color) => {
         setFilbotColors({
@@ -39,7 +40,7 @@ const Customize = () => {
     return (
         <>
             <div
-                className={`absolute top-1/2 right-24 transform -translate-y-1/2 w-1/4 bg-gray-950 text-white p-6 rounded-2xl shadow-xl font-poppins border border-gray-700 transition-opacity duration-500 ${
+                className={`absolute top-1/2 right-20 transform -translate-y-1/2 w-1/4 bg-gray-950 text-white p-6 rounded-2xl shadow-xl font-poppins border border-gray-700 transition-opacity duration-500 ${
                     phase === phases.CUSTOMIZE ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
                 }`}
             >
@@ -52,7 +53,7 @@ const Customize = () => {
                 </button>
                 
                 {/* Title */}
-                <h3 className="text-xl font-semibold text-white mb-4">Color Configurator</h3>
+                <h3 className="text-xl font-semibold text-white mb-4">Color Customization</h3>
             
                 {/* Color Pickers */}
                 <div className="space-y-3">
@@ -63,7 +64,7 @@ const Customize = () => {
                             type="color"
                             value={filbotColors[part]}
                             onChange={(e) => handleColorChange(part, e.target.value)}
-                            className="w-32 h-10 border-none rounded overflow-hidden cursor-pointer bg-transparent"
+                            className="w-1/4 h-8 border-none rounded overflow-hidden cursor-pointer bg-transparent"
                         />
                     </div>
                     ))}
@@ -78,10 +79,18 @@ const Customize = () => {
                         Reset
                     </button>
                     <button
-                        className="w-[45%] py-2 rounded-md bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition cursor-pointer"
+                        className="w-[45%] py-2 rounded-md bg-gray-600 hover:bg-gray-700 text-white font-semibold transition cursor-pointer"
                         onClick={handleRandom}
                     >
                         Random
+                    </button>
+                </div>
+                <div className="mt-4 flex">
+                    <button
+                        className="w-full py-2 rounded-md bg-emerald-500 hover:bg-emerald-600 text-white font-semibold transition cursor-pointer"
+                        onClick={() => setPlayAnimation(true)}
+                    >
+                        Play Animation
                     </button>
                 </div>
             </div>

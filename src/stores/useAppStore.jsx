@@ -17,6 +17,7 @@ export const useAppStore = create((set) => ({
       Joints: '#a4f4cf',
       Wheels: '#c3c3c3',
   },
+  isPlayAnimation: false,
 
   setPhase: (phase) => {
     set(() => {
@@ -29,4 +30,10 @@ export const useAppStore = create((set) => ({
       return { filbotColors };
     });
   },
+
+  setPlayAnimation: (isPlayAnimation) => {
+    set(() => {
+      return { isPlayAnimation }
+    })
+  }
 }));

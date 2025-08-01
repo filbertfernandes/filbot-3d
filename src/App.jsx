@@ -4,6 +4,7 @@ import Home from './components/ui/Home.jsx'
 import Customize from './components/ui/Customize.jsx'
 import { useEffect } from 'react'
 import { phases, useAppStore } from './stores/useAppStore.jsx'
+import Credits from './components/ui/Credits.jsx'
 
 export default function App() {
   const phase = useAppStore((state) => state.phase)
@@ -37,6 +38,7 @@ export default function App() {
 
       <Home />
       <Customize />
+      <Credits />
     </>
   )
 }

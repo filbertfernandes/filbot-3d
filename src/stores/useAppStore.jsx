@@ -20,6 +20,7 @@ export const useAppStore = create((set) => ({
   isPlayAnimation: false,
 
   setPhase: (phase) => {
+    window.scrollTo(0, 0);
     set(() => {
       return { phase };
     });

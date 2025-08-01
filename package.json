@@ -1,0 +1,27 @@
+{
+  "name": "filbot-3d-configurator",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "4.3",
+    "vite": "^6.2.2",
+    "vite-plugin-restart": "^0.4.2"
+  },
+  "dependencies": {
+    "@react-three/drei": "^10.0.4",
+    "@react-three/fiber": "^9.1.0",
+    "@tailwindcss/vite": "^4.1.11",
+    "gsap": "^3.13.0",
+    "r3f-perf": "^7.2.3",
+    "react": "19.0",
+    "react-dom": "19.0",
+    "tailwindcss": "^4.1.11",
+    "three": "^0.174.0",
+    "zustand": "^5.0.7"
+  }
+}

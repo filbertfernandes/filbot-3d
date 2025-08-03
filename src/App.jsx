@@ -28,7 +28,6 @@ export default function App() {
             fov: 45,
             near: 0.1,
             far: 150,
-            position: [-5.49, 3.6, 7.03],
           }}
         >
           <color attach="background" args={["#1f1f1f"]} />

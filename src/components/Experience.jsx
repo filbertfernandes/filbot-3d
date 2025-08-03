@@ -4,13 +4,16 @@ import { Environment, MeshReflectorMaterial, OrbitControls, Stage } from '@react
 import { Robot } from './Robot'
 import gsap from 'gsap'
 import { phases, useAppStore } from '../stores/useAppStore'
-import { cameraPosition, controlsTarget } from '../data/camera'
+import { cameraPosition, controlsTarget, mobileCameraPosition, mobileControlsTarget } from '../data/camera'
 import DeliverScene from './DeliverScene'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useMediaQuery } from 'react-responsive'
 
 gsap.registerPlugin(ScrollTrigger);
 
 export default function Experience() {
+  const isMobile = useMediaQuery({ maxWidth: 768 })
+
   const controlsRef = useRef()
   const { camera } = useThree()
 
@@ -28,17 +31,17 @@ export default function Experience() {
     
     tl.to(controlsRef.current.target, 
       {
-        x: controlsTarget.x[phase],
-        y: controlsTarget.y[phase],
-        z: controlsTarget.z[phase],
+        x: isMobile ? mobileControlsTarget[phase][0] : controlsTarget[phase][0],
+        y: isMobile ? mobileControlsTarget[phase][1] : controlsTarget[phase][1],
+        z: isMobile ? mobileControlsTarget[phase][2] : controlsTarget[phase][2],
         duration: 1,
       }
     )
     .to(camera.position, 
         {
-          x: cameraPosition.x[phase],
-          y: cameraPosition.y[phase],
-          z: cameraPosition.z[phase],
+          x: isMobile ? mobileCameraPosition[phase][0] : cameraPosition[phase][0],
+          y: isMobile ? mobileCameraPosition[phase][1] : cameraPosition[phase][1],
+          z: isMobile ? mobileCameraPosition[phase][2] : cameraPosition[phase][2],
           duration: 1,
         },
         "-=1"
@@ -46,6 +49,8 @@ export default function Experience() {
   }, [phase])
 
   useEffect(() => {
+    if (phase !== phases.HOME) return
+
     gsap
       .timeline({
         scrollTrigger: {
@@ -56,9 +61,9 @@ export default function Experience() {
         },
       })
       .to(controlsRef.current.target, {
-        x: controlsTarget.x.HOME_SECTION_2,
-        y: controlsTarget.y.HOME_SECTION_2,
-        z: controlsTarget.z.HOME_SECTION_2,
+        x: isMobile ? mobileControlsTarget.HOME_SECTION_2[0] : controlsTarget.HOME_SECTION_2[0],
+        y: isMobile ? mobileControlsTarget.HOME_SECTION_2[1] : controlsTarget.HOME_SECTION_2[1],
+        z: isMobile ? mobileControlsTarget.HOME_SECTION_2[2] : controlsTarget.HOME_SECTION_2[2],
         ease: "power2.inOut",
       });
 
@@ -72,9 +77,9 @@ export default function Experience() {
         },
       })
       .to(camera.position, {
-        x: cameraPosition.x.HOME_SECTION_2,
-        y: cameraPosition.y.HOME_SECTION_2,
-        z: cameraPosition.z.HOME_SECTION_2,
+        x: isMobile ? mobileCameraPosition.HOME_SECTION_2[0] : cameraPosition.HOME_SECTION_2[0],
+        y: isMobile ? mobileCameraPosition.HOME_SECTION_2[1] : cameraPosition.HOME_SECTION_2[1],
+        z: isMobile ? mobileCameraPosition.HOME_SECTION_2[2] : cameraPosition.HOME_SECTION_2[2],
         ease: "power2.inOut",
       });
   })
@@ -83,12 +88,11 @@ export default function Experience() {
     <>
       <OrbitControls 
         ref={controlsRef}
-        target={[3.1271897394894195, 1.9258244781726472, 1.846361435585223]}
         enablePan={true} 
         enableRotate={phase !== phases.HOME}
         enableZoom={phase !== phases.HOME}
         maxPolarAngle={Math.PI / 2}
-        maxDistance={25}
+        maxDistance={isMobile ? 45 : 25}
       />
 
       <Environment preset="city" />

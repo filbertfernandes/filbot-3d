@@ -2,15 +2,14 @@ import React from 'react'
 
 const Credits = () => {
   return (
-    <div className="fixed bottom-4 right-4 z-10 text-gray-300 text-xs bg-black/50 px-3 py-2 rounded-lg backdrop-blur-sm max-w-xs">
+    <div className="fixed bottom-4 left-4 z-10 text-gray-300 text-xs bg-black/50 px-3 py-2 rounded-lg backdrop-blur-sm max-w-xs">
       <p className="leading-relaxed">
         Developed by{' '}
-        <a href="#" className="underline font-medium" target="_blank" rel="noopener noreferrer">Filbert Fernandes</a><span className='mr-1'>.</span>
+        <a href="#" className="underline font-medium" target="_blank" rel="noopener noreferrer">Filbert Fernandes</a>.{' '}
         (<a href="#" className="underline font-medium" target="_blank" rel="noopener noreferrer">Source Code</a>)
         
-        <br /><br />
+        <br />
 
-        <span className="font-semibold">3D Models:</span><br />
         <a href="https://sketchfab.com/3d-models/toy-robot-animated-lowpoly-6bc8f39aac354dfbbd374bb9ba5b4c24" target="_blank" rel="noopener noreferrer" className="underline">
           "Toy Robot Animated - Lowpoly"
         </a> by <a href="https://sketchfab.com/rkmorello" target="_blank" rel="noopener noreferrer" className="underline">rkmorello</a><br />

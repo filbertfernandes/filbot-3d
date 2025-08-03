@@ -48,31 +48,31 @@ const Home = () => {
     <div className={`relative z-10 transition-opacity duration-500 ease-in-out ${phase === phases.HOME ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}`}>
       <section 
         id="section1"
-        className="min-h-screen flex flex-col justify-center px-20 text-white font-poppins items-end"
+        className="min-h-screen flex flex-col text-white font-poppins items-center md:px-20 md:justify-center md:items-end"
       >
         <div
           id="text1"
-          className="w-1/2"
+          className="w-[90%] pt-8 md:w-1/2 md:pt-0"
         >
-          <h1 className="text-5xl font-bold leading-tight mb-6">
+          <h1 className="text-3xl font-bold leading-tight mb-2 md:mb-6 md:text-5xl">
             Meet, <span className="text-emerald-400">FILBOT</span>.
           </h1>
 
-          <p className="text-gray-300 text-lg leading-relaxed mb-8">
+          <p className="text-gray-300 text-sm leading-relaxed mb-4 md:mb-8 md:text-lg">
             <strong>FILBOT</strong> is your <strong>smart robotic companion</strong> — stylish, futuristic, and full of personality.
             <br />
             Customize your favorite color, and we'll build and deliver <strong>FILBOT straight to your home.</strong>
           </p>
 
-          <div className="flex gap-4 text-lg">
+          <div className="flex gap-4 text-sm md:text-lg">
             <button 
-              className="px-6 py-3 rounded-lg font-bold bg-emerald-500 hover:bg-emerald-600 transition cursor-pointer"
+              className="px-2 py-1 rounded-lg font-bold bg-emerald-500 hover:bg-emerald-600 transition cursor-pointer md:px-6 md:py-3"
               onClick={() => setPhase(phases.CUSTOMIZE)}
             >
               Customize
             </button>
             <button 
-              className="px-6 py-3 rounded-lg font-bold bg-emerald-500 hover:bg-emerald-600 transition cursor-pointer"
+              className="px-2 py-1 rounded-lg font-bold bg-emerald-500 hover:bg-emerald-600 transition cursor-pointer md:px-6 md:py-3"
               onClick={() => setPhase(phases.FEATURES)}  
             >
               Features
@@ -83,17 +83,17 @@ const Home = () => {
 
       <section
         id="section2"
-        className="min-h-screen flex flex-col justify-center px-20 text-white font-poppins"
+        className="min-h-screen flex flex-col text-white font-poppins items-center md:px-20 md:justify-center md:items-start"
       >
         <div
           id="text2"
-          className="w-1/2 opacity-0"
+          className="w-[90%] opacity-0 pt-16 md:w-1/2 md:pt-0"
         >
-          <h1 className="text-5xl font-bold leading-tight mb-6">
+          <h1 className="text-3xl font-bold leading-tight md:text-5xl md:mb-6">
             Over 500,000 <span className="text-emerald-400">FILBOTs</span> Delivered Worldwide & Counting.
           </h1>
 
-          <p className="text-gray-300 text-lg leading-relaxed mb-8">
+          <p className="text-sm text-gray-300 leading-relaxed md:text-lg md:mb-8">
             The <strong>future</strong> is rolling in, and it's <strong>more fun</strong> than ever. Ready to <strong>meet yours</strong>?
           </p>
         </div>

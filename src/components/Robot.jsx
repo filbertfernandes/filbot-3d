@@ -1,16 +1,77 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
-import { useAppStore } from '../stores/useAppStore'
+import { phases, useAppStore } from '../stores/useAppStore'
 import { DoubleSide, LoopOnce } from 'three'
+import { useFrame, useThree } from '@react-three/fiber'
 
 export function Robot(props) {
   const group = useRef()
+  const headRef = useRef()
   const { nodes, materials, animations } = useGLTF('/models/robot.glb')
   const { actions } = useAnimations(animations, group)
 
+  const phase = useAppStore((state) => state.phase) 
   const isPlayAnimation = useAppStore((state) => state.isPlayAnimation) 
   const setPlayAnimation = useAppStore((state) => state.setPlayAnimation) 
+  const filbotColors = useAppStore((state) => state.filbotColors)
 
+  const { size } = useThree()
+  const [mouse, setMouse] = useState({ x: 0, y: 0 })
+
+  useEffect(() => {
+    const handleMouseMove = (event) => {
+      const x = (event.clientX / size.width) * 2 - 1
+      const y = -(event.clientY / size.height) * 2 + 1
+      setMouse({ x, y })
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    return () => window.removeEventListener('mousemove', handleMouseMove)
+  }, [size])
+
+  useEffect(() => {
+    if (!headRef.current) return
+
+    if (phase !== phases.HOME) {
+      headRef.current.rotation.x = 0
+      headRef.current.rotation.y = 0
+    }
+  }, [phase])
+
+  useEffect(() => {
+    const action = actions.Animation
+    if (!action) return
+  
+    if (phase !== phases.HOME) {
+      action.fadeOut(0.75)
+    }
+  
+    return () => {
+      action.fadeOut(0.75)
+    }
+  }, [phase, actions])
+    
+
+  useFrame(() => {
+    if (!headRef.current || phase !== phases.HOME) return
+  
+    const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
+  
+    const normalizedX = clamp(mouse.x, -1, 1)
+    const normalizedY = clamp(mouse.y, -1, 1)
+  
+    const minXRot = -0.1
+    const maxXRot = 0.5
+    const rotationX = ((-normalizedY + 1) / 2) * (maxXRot - minXRot) + minXRot
+  
+    const minYRot = -1
+    const maxYRot = 0.5
+    const rotationY = ((normalizedX + 1) / 2) * (maxYRot - minYRot) + minYRot
+  
+    headRef.current.rotation.x = rotationX
+    headRef.current.rotation.y = rotationY
+  })
+  
   useEffect(() => {
     if (!isPlayAnimation) return 
 
@@ -25,31 +86,123 @@ export function Robot(props) {
     }
   }, [actions, isPlayAnimation])
 
-  const filbotColors = useAppStore((state) => state.filbotColors)
-
   return (
     <group ref={group} {...props} dispose={null}>
       <group name="Scene">
         <group name="Sketchfab_model" position={[0, 1.681, 0]} rotation={[-Math.PI / 2, 0, 0]}>
           <group name="root">
             <group name="GLTF_SceneRootNode" rotation={[Math.PI / 2, 0, 0]}>
-              <group name="BezierCurve_3" position={[-1.255, 1.972, 0.002]} scale={0.27}>
-                <mesh
-                  name="Antenna"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Antenna.geometry}
-                >
-                  <meshStandardMaterial color={filbotColors.Antenna} />
-                </mesh>
-                <mesh
-                  name="Object_16"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Object_16.geometry}
-                  material={materials.Black}
-                />
+
+              <group ref={headRef} rotation={[Math.PI * 0, Math.PI * 0, Math.PI * 0]}>
+                {/* Antenna */}
+                <group name="BezierCurve_3" position={[-1.255, 1.972, 0.002]} scale={0.27}>
+                  <mesh
+                    name="Antenna"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Antenna.geometry}
+                  >
+                    <meshStandardMaterial color={filbotColors.Antenna} />
+                  </mesh>
+                  <mesh
+                    name="Object_16"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Object_16.geometry}
+                    material={materials.Black}
+                  />
+                </group>
+
+                {/* Head */}
+                <group
+                  name="Cylinder002_2"
+                  position={[0, 1.963, 0.002]}
+                  rotation={[0, 0, Math.PI / 2]}>
+                  <mesh
+                    name="Base_01"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Base_01.geometry}
+                  >
+                    <meshStandardMaterial color={filbotColors.Base} />
+                  </mesh>
+                  <mesh
+                    name="Eyes"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Eyes.geometry}
+                  >
+                    <meshStandardMaterial color={filbotColors.Eyes} />
+                  </mesh>
+                  <mesh
+                    name="Object_10"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Object_10.geometry}
+                    material={materials.Green}
+                  />
+                  <mesh
+                    name="Object_11"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Object_11.geometry}
+                    material={materials.Dark_Green}
+                  />
+                  <mesh
+                    name="Object_12"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Object_12.geometry}
+                    material={materials.Cooper}
+                  />
+                  <mesh
+                    name="Object_13"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Object_13.geometry}
+                    material={materials.Silver}
+                  />
+                  <mesh
+                    name="Object_14"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Object_14.geometry}
+                    material={materials.Yellow}
+                  />
+                  <mesh
+                    name="Object_6"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Object_6.geometry}
+                    material={materials.Black}
+                  />
+                  <mesh
+                    name="Object_9"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Object_9.geometry}
+                    material={materials.Light}
+                  />
+                  <mesh
+                    name="Side_01"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Side_01.geometry}
+                  >
+                    <meshStandardMaterial color={filbotColors.Side} />
+                  </mesh>
+                  <mesh
+                    name="Skeleton_09"
+                    castShadow
+                    receiveShadow
+                    geometry={nodes.Skeleton_09.geometry}
+                  >
+                    <meshStandardMaterial color={filbotColors.Skeleton} />
+                  </mesh>
+                </group>
               </group>
+              
+
               <group name="Cube001_23" position={[0, -1.157, -0.027]}>
                 <group
                   name="BezierCircle001_19"
@@ -205,92 +358,7 @@ export function Robot(props) {
                   <meshStandardMaterial color={filbotColors.Skeleton} />
                 </mesh>
               </group>
-              <group
-                name="Cylinder002_2"
-                position={[0, 1.963, 0.002]}
-                rotation={[0, 0, Math.PI / 2]}>
-                <mesh
-                  name="Base_01"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Base_01.geometry}
-                >
-                  <meshStandardMaterial color={filbotColors.Base} />
-                </mesh>
-                <mesh
-                  name="Eyes"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Eyes.geometry}
-                >
-                  <meshStandardMaterial color={filbotColors.Eyes} />
-                </mesh>
-                <mesh
-                  name="Object_10"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Object_10.geometry}
-                  material={materials.Green}
-                />
-                <mesh
-                  name="Object_11"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Object_11.geometry}
-                  material={materials.Dark_Green}
-                />
-                <mesh
-                  name="Object_12"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Object_12.geometry}
-                  material={materials.Cooper}
-                />
-                <mesh
-                  name="Object_13"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Object_13.geometry}
-                  material={materials.Silver}
-                />
-                <mesh
-                  name="Object_14"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Object_14.geometry}
-                  material={materials.Yellow}
-                />
-                <mesh
-                  name="Object_6"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Object_6.geometry}
-                  material={materials.Black}
-                />
-                <mesh
-                  name="Object_9"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Object_9.geometry}
-                  material={materials.Light}
-                />
-                <mesh
-                  name="Side_01"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Side_01.geometry}
-                >
-                  <meshStandardMaterial color={filbotColors.Side} />
-                </mesh>
-                <mesh
-                  name="Skeleton_09"
-                  castShadow
-                  receiveShadow
-                  geometry={nodes.Skeleton_09.geometry}
-                >
-                  <meshStandardMaterial color={filbotColors.Skeleton} />
-                </mesh>
-              </group>
+
               <group
                 name="Cylinder006_5"
                 position={[-1.285, -0.281, 0.087]}

@@ -1,5 +1,3 @@
-import React from 'react'
-
 const Credits = () => {
   return (
     <div className="fixed bottom-4 left-4 z-10 text-gray-300 text-xs bg-black/50 px-3 py-2 rounded-lg backdrop-blur-sm max-w-xs">

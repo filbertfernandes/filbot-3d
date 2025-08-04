@@ -18,6 +18,9 @@ export const useAppStore = create((set) => ({
       Wheels: '#c3c3c3',
   },
   isPlayAnimation: false,
+  isStopBlinking: false,
+  eyelidLeftMorph: 0,
+  eyelidRightMorph: 0,
 
   setPhase: (phase) => {
     window.scrollTo(0, 0);
@@ -36,5 +39,23 @@ export const useAppStore = create((set) => ({
     set(() => {
       return { isPlayAnimation }
     })
-  }
+  },
+
+  setStopBlinking: (isStopBlinking) => {
+    set(() => {
+      return { isStopBlinking }
+    })
+  },
+
+  setEyelidLeftMorph: (eyelidLeftMorph) => {
+    set(() => {
+      return { eyelidLeftMorph }
+    })
+  },
+
+  setEyelidRightMorph: (eyelidRightMorph) => {
+    set(() => {
+      return { eyelidRightMorph }
+    })
+  },
 }));

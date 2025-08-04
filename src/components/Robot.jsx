@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { useGLTF, useAnimations } from '@react-three/drei'
 import { phases, useAppStore } from '../stores/useAppStore'
-import { DoubleSide, LoopOnce } from 'three'
+import { DoubleSide, LoopOnce, Clock } from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
 
 export function Robot(props) {
   const group = useRef()
   const headRef = useRef()
+
   const { nodes, materials, animations } = useGLTF('/models/robot.glb')
   const { actions } = useAnimations(animations, group)
 
@@ -17,6 +18,44 @@ export function Robot(props) {
 
   const { size } = useThree()
   const [mouse, setMouse] = useState({ x: 0, y: 0 })
+
+  // Eyes blinking parameters
+  const eyelidLeftRef = useRef()
+  const eyelidRightRef = useRef()
+  const blinkInterval = useRef(0)
+  const blinkDuration = 0.15 // seconds to close or open
+  const blinkHold = 0.08    // how long eyes stay closed
+  const blinkTimer = useRef(0)
+  const [isBlinking, setIsBlinking] = useState(false)
+  const [blinkPhase, setBlinkPhase] = useState('idle') // 'closing', 'hold', 'opening'
+
+  const clock = useRef(new Clock())
+
+  const getBlinkIndex = (ref, name) => {
+    return ref.current?.morphTargetDictionary?.[name]
+  }
+
+  const isStopBlinking = useAppStore((state) => state.isStopBlinking)
+  const eyelidLeftMorph = useAppStore((state) => state.eyelidLeftMorph)
+  const eyelidRightMorph = useAppStore((state) => state.eyelidRightMorph)
+
+  useEffect(() => {
+    if (eyelidLeftRef.current && eyelidRightRef.current) {
+      const blinkIndexLeft = getBlinkIndex(eyelidLeftRef, 'Eyeblink') ?? 0
+      const blinkIndexRight = getBlinkIndex(eyelidRightRef, 'Eyeblink') ?? 0
+      eyelidLeftRef.current.morphTargetInfluences[blinkIndexLeft] = 0
+      eyelidRightRef.current.morphTargetInfluences[blinkIndexRight] = 0
+    }
+  }, [isStopBlinking])
+
+  useEffect(() => {
+    if (eyelidLeftRef.current && eyelidRightRef.current) {
+      const blinkIndexLeft = getBlinkIndex(eyelidLeftRef, 'Eyeblink') ?? 0
+      const blinkIndexRight = getBlinkIndex(eyelidRightRef, 'Eyeblink') ?? 0
+      eyelidLeftRef.current.morphTargetInfluences[blinkIndexLeft] = eyelidLeftMorph
+      eyelidRightRef.current.morphTargetInfluences[blinkIndexRight] = eyelidRightMorph
+    }
+  }, [eyelidLeftMorph, eyelidRightMorph])
 
   useEffect(() => {
     const handleMouseMove = (event) => {
@@ -32,6 +71,9 @@ export function Robot(props) {
   useFrame(() => {
     if (!headRef.current) return
 
+    /**
+     * Head look at cursor
+     */
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
 
     let targetX = 0
@@ -53,6 +95,68 @@ export function Robot(props) {
     // Smooth lerp
     headRef.current.rotation.x += (targetX - headRef.current.rotation.x) * 0.1
     headRef.current.rotation.y += (targetY - headRef.current.rotation.y) * 0.1
+
+    /**
+     * Eyes blinking
+     */
+    const elapsed = clock.current.getElapsedTime()
+
+    // If not blinking, wait randomly 3-8 seconds
+    if (!isBlinking) {
+      if (elapsed - blinkInterval.current > 3 + Math.random() * 5) {
+        setIsBlinking(true)
+        setBlinkPhase('closing')
+        blinkTimer.current = elapsed
+        blinkInterval.current = elapsed
+      }
+    }
+
+    const left = eyelidLeftRef.current
+    const right = eyelidRightRef.current
+
+    if (!left || !right) return
+
+    const blinkIndexLeft = getBlinkIndex(eyelidLeftRef, 'Eyeblink') ?? 0
+    const blinkIndexRight = getBlinkIndex(eyelidRightRef, 'Eyeblink') ?? 0
+
+    // Cancel and reset blink if blinking is stopped
+    if (isStopBlinking) {
+      setIsBlinking(false)
+      setBlinkPhase('idle')
+      return
+    }
+
+    const t = elapsed - blinkTimer.current
+
+    if (isBlinking) {
+      if (blinkPhase === 'closing') {
+        const progress = Math.min(t / blinkDuration, 1)
+        left.morphTargetInfluences[blinkIndexLeft] = progress
+        right.morphTargetInfluences[blinkIndexRight] = progress
+
+        if (progress >= 1) {
+          setBlinkPhase('hold')
+          blinkTimer.current = elapsed
+        }
+      } else if (blinkPhase === 'hold') {
+        left.morphTargetInfluences[blinkIndexLeft] = 1
+        right.morphTargetInfluences[blinkIndexRight] = 1
+
+        if (t >= blinkHold) {
+          setBlinkPhase('opening')
+          blinkTimer.current = elapsed
+        }
+      } else if (blinkPhase === 'opening') {
+        const progress = Math.min(t / blinkDuration, 1)
+        left.morphTargetInfluences[blinkIndexLeft] = 1 - progress
+        right.morphTargetInfluences[blinkIndexRight] = 1 - progress
+
+        if (progress >= 1) {
+          setIsBlinking(false)
+          setBlinkPhase('idle')
+        }
+      }
+    }
   })
 
   useEffect(() => {
@@ -89,115 +193,146 @@ export function Robot(props) {
           <group name="root">
             <group name="GLTF_SceneRootNode" rotation={[Math.PI / 2, 0, 0]}>
 
-              <group ref={headRef} rotation={[Math.PI * 0, Math.PI * 0, Math.PI * 0]}>
-                {/* Antenna */}
-                <group name="BezierCurve_3" position={[-1.255, 1.972, 0.002]} scale={0.27}>
-                  <mesh
-                    name="Antenna"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Antenna.geometry}
-                  >
-                    <meshStandardMaterial color={filbotColors.Antenna} />
-                  </mesh>
-                  <mesh
-                    name="Object_16"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_16.geometry}
-                    material={materials.Black}
-                  />
-                </group>
-
-                {/* Head */}
-                <group
-                  name="Cylinder002_2"
-                  position={[0, 1.963, 0.002]}
-                  rotation={[0, 0, Math.PI / 2]}>
-                  <mesh
-                    name="Base_01"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Base_01.geometry}
-                  >
-                    <meshStandardMaterial color={filbotColors.Base} />
-                  </mesh>
-                  <mesh
-                    name="Eyes"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Eyes.geometry}
-                  >
-                    <meshStandardMaterial color={filbotColors.Eyes} />
-                  </mesh>
-                  <mesh
-                    name="Object_10"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_10.geometry}
-                    material={materials.Green}
-                  />
-                  <mesh
-                    name="Object_11"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_11.geometry}
-                    material={materials.Dark_Green}
-                  />
-                  <mesh
-                    name="Object_12"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_12.geometry}
-                    material={materials.Cooper}
-                  />
-                  <mesh
-                    name="Object_13"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_13.geometry}
-                    material={materials.Silver}
-                  />
-                  <mesh
-                    name="Object_14"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_14.geometry}
-                    material={materials.Yellow}
-                  />
-                  <mesh
-                    name="Object_6"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_6.geometry}
-                    material={materials.Black}
-                  />
-                  <mesh
-                    name="Object_9"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Object_9.geometry}
-                    material={materials.Light}
-                  />
-                  <mesh
-                    name="Side_01"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Side_01.geometry}
-                  >
-                    <meshStandardMaterial color={filbotColors.Side} />
-                  </mesh>
-                  <mesh
-                    name="Skeleton_09"
-                    castShadow
-                    receiveShadow
-                    geometry={nodes.Skeleton_09.geometry}
-                  >
-                    <meshStandardMaterial color={filbotColors.Skeleton} />
-                  </mesh>
-                </group>
+            <group ref={headRef} rotation={[Math.PI * 0, Math.PI * 0, Math.PI * 0]}>
+              {/* Antenna */}
+              <group name="BezierCurve_3" position={[-1.255, 1.972, 0.002]} scale={0.27}>
+                <mesh
+                  name="Antenna"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Antenna.geometry}
+                >
+                  <meshStandardMaterial color={filbotColors.Antenna} />
+                </mesh>
+                <mesh
+                  name="Object_16"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Object_16.geometry}
+                  material={materials.Black}
+                />
               </group>
-              
+
+              {/* Head */}
+              <group
+                name="Cylinder002_2"
+                position={[0, 1.963, 0.002]}
+                rotation={[0, 0, Math.PI / 2]}>
+                <mesh
+                  name="Base_01"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Base_01.geometry}
+                >
+                  <meshStandardMaterial color={filbotColors.Base} />
+                </mesh>
+                <mesh
+                  name="Eyes"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Eyes.geometry}
+                >
+                  <meshStandardMaterial color={filbotColors.Eyes} />
+                </mesh>
+                <mesh
+                  name="Object_10"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Object_10.geometry}
+                  material={materials.Green}
+                />
+                <mesh
+                  name="Object_11"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Object_11.geometry}
+                  material={materials.Dark_Green}
+                />
+                <mesh
+                  name="Object_12"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Object_12.geometry}
+                  material={materials.Cooper}
+                />
+                <mesh
+                  name="Object_13"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Object_13.geometry}
+                  material={materials.Silver}
+                />
+                <mesh
+                  name="Object_14"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Object_14.geometry}
+                  material={materials.Yellow}
+                />
+                <mesh
+                  name="Object_6"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Object_6.geometry}
+                  material={materials.Black}
+                />
+                <mesh
+                  ref={eyelidLeftRef}
+                  name="Eyelid_Left"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Eyelid_Left.geometry}
+                  material={materials.Black}
+                  morphTargetDictionary={nodes.Eyelid_Left.morphTargetDictionary}
+                  morphTargetInfluences={nodes.Eyelid_Left.morphTargetInfluences}
+                  position={[0, -0.943, 0.01]}
+                  scale={[1, 1.007, 1]}
+                />
+                <mesh
+                  ref={eyelidRightRef}
+                  name="Eyelid_Right"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Eyelid_Right.geometry}
+                  material={materials.Black}
+                  morphTargetDictionary={nodes.Eyelid_Right.morphTargetDictionary}
+                  morphTargetInfluences={nodes.Eyelid_Right.morphTargetInfluences}
+                  position={[0, -0.008, 0.01]}
+                  scale={[1, 1.007, 1]}
+                />
+                <mesh
+                  name="Object_9"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Object_9.geometry}
+                  material={materials.Light}
+                />
+                <mesh
+                  name="Object_9002"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Object_9002.geometry}
+                  material={materials.Light}
+                  position={[0, 0.939, 0]}
+                />
+                <mesh
+                  name="Side_01"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Side_01.geometry}
+                >
+                  <meshStandardMaterial color={filbotColors.Side} />
+                </mesh>
+                <mesh
+                  name="Skeleton_09"
+                  castShadow
+                  receiveShadow
+                  geometry={nodes.Skeleton_09.geometry}
+                >
+                  <meshStandardMaterial color={filbotColors.Skeleton} />
+                </mesh>
+              </group>
+            </group>
 
               <group name="Cube001_23" position={[0, -1.157, -0.027]}>
                 <group
@@ -243,7 +378,6 @@ export function Robot(props) {
                       castShadow
                       receiveShadow
                       geometry={nodes.Joint_01.geometry}
-                      material={materials.Orange}
                     >
                       <meshStandardMaterial color={filbotColors.Joints} />
                     </mesh>
@@ -258,7 +392,6 @@ export function Robot(props) {
                       castShadow
                       receiveShadow
                       geometry={nodes.Joint_02.geometry}
-                      material={materials.Orange}
                     >
                       <meshStandardMaterial color={filbotColors.Joints} side={DoubleSide} />
                     </mesh>
@@ -332,7 +465,6 @@ export function Robot(props) {
                     castShadow
                     receiveShadow
                     geometry={nodes.Skeleton_01.geometry}
-                    material={materials.Grey}
                   >
                     <meshStandardMaterial color={filbotColors.Skeleton} />
                   </mesh>
@@ -349,12 +481,11 @@ export function Robot(props) {
                   castShadow
                   receiveShadow
                   geometry={nodes.Skeleton_08.geometry}
-                  material={materials.Grey}
                 >
                   <meshStandardMaterial color={filbotColors.Skeleton} />
                 </mesh>
               </group>
-
+              
               <group
                 name="Cylinder006_5"
                 position={[-1.285, -0.281, 0.087]}

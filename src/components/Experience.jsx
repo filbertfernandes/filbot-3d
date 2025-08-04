@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { useThree, useFrame } from '@react-three/fiber'
+import { useThree } from '@react-three/fiber'
 import { Environment, MeshReflectorMaterial, OrbitControls, Stage } from '@react-three/drei'
 import { Robot } from './Robot'
 import gsap from 'gsap'

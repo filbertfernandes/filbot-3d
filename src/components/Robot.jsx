@@ -10,9 +10,9 @@ export function Robot(props) {
   const { nodes, materials, animations } = useGLTF('/models/robot.glb')
   const { actions } = useAnimations(animations, group)
 
-  const phase = useAppStore((state) => state.phase) 
-  const isPlayAnimation = useAppStore((state) => state.isPlayAnimation) 
-  const setPlayAnimation = useAppStore((state) => state.setPlayAnimation) 
+  const phase = useAppStore((state) => state.phase)
+  const isPlayAnimation = useAppStore((state) => state.isPlayAnimation)
+  const setPlayAnimation = useAppStore((state) => state.setPlayAnimation)
   const filbotColors = useAppStore((state) => state.filbotColors)
 
   const { size } = useThree()
@@ -29,51 +29,34 @@ export function Robot(props) {
     return () => window.removeEventListener('mousemove', handleMouseMove)
   }, [size])
 
-  useEffect(() => {
+  useFrame(() => {
     if (!headRef.current) return
 
-    if (phase !== phases.HOME) {
-      headRef.current.rotation.x = 0
-      headRef.current.rotation.y = 0
-    }
-  }, [phase])
-
-  useEffect(() => {
-    const action = actions.Animation
-    if (!action) return
-  
-    if (phase !== phases.HOME) {
-      action.fadeOut(0.75)
-    }
-  
-    return () => {
-      action.fadeOut(0.75)
-    }
-  }, [phase, actions])
-    
-
-  useFrame(() => {
-    if (!headRef.current || phase !== phases.HOME) return
-  
     const clamp = (v, min, max) => Math.max(min, Math.min(max, v))
-  
-    const normalizedX = clamp(mouse.x, -1, 1)
-    const normalizedY = clamp(mouse.y, -1, 1)
-  
-    const minXRot = -0.1
-    const maxXRot = 0.5
-    const rotationX = ((-normalizedY + 1) / 2) * (maxXRot - minXRot) + minXRot
-  
-    const minYRot = -1
-    const maxYRot = 0.5
-    const rotationY = ((normalizedX + 1) / 2) * (maxYRot - minYRot) + minYRot
-  
-    headRef.current.rotation.x = rotationX
-    headRef.current.rotation.y = rotationY
+
+    let targetX = 0
+    let targetY = 0
+
+    if (phase === phases.HOME) {
+      const normalizedX = clamp(mouse.x, -1, 1)
+      const normalizedY = clamp(mouse.y, -1, 1)
+
+      const minXRot = -0.1
+      const maxXRot = 0.5
+      const minYRot = -1
+      const maxYRot = 0.5
+
+      targetX = ((-normalizedY + 1) / 2) * (maxXRot - minXRot) + minXRot
+      targetY = ((normalizedX + 1) / 2) * (maxYRot - minYRot) + minYRot
+    }
+
+    // Smooth lerp
+    headRef.current.rotation.x += (targetX - headRef.current.rotation.x) * 0.1
+    headRef.current.rotation.y += (targetY - headRef.current.rotation.y) * 0.1
   })
-  
+
   useEffect(() => {
-    if (!isPlayAnimation) return 
+    if (!isPlayAnimation) return
 
     const action = actions.Animation
     if (action) {
@@ -85,6 +68,19 @@ export function Robot(props) {
       setPlayAnimation(false)
     }
   }, [actions, isPlayAnimation])
+
+  useEffect(() => {
+    const action = actions.Animation
+    if (!action) return
+
+    if (phase !== phases.HOME) {
+      action.fadeOut(0.75)
+    }
+
+    return () => {
+      action.fadeOut(0.75)
+    }
+  }, [phase, actions])
 
   return (
     <group ref={group} {...props} dispose={null}>

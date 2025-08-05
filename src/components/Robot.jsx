@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import { useGLTF, useAnimations } from '@react-three/drei'
+import { useGLTF, useAnimations, useTexture, Decal } from '@react-three/drei'
 import { phases, useAppStore } from '../stores/useAppStore'
-import { DoubleSide, LoopOnce, Clock } from 'three'
+import { DoubleSide, LoopOnce, Clock, TextureLoader } from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
 
 export function Robot(props) {
@@ -18,6 +18,22 @@ export function Robot(props) {
 
   const { size } = useThree()
   const [mouse, setMouse] = useState({ x: 0, y: 0 })
+
+  const isNeedSticker = useAppStore((state) => state.isNeedSticker)
+  const stickerTexture = useAppStore((state) => state.stickerTexture)
+  const [decalTexture, setDecalTexture] = useState(null)
+
+  useEffect(() => {
+    if (!stickerTexture || !isNeedSticker) {
+      setDecalTexture(null)
+      return
+    }
+
+    const loader = new TextureLoader()
+    loader.load(stickerTexture, (e) => {
+      setDecalTexture(e)
+    })
+  }, [stickerTexture, isNeedSticker])
 
   // Eyes blinking parameters
   const eyelidLeftRef = useRef()
@@ -367,6 +383,21 @@ export function Robot(props) {
                     geometry={nodes.Base_02.geometry}
                   >
                     <meshStandardMaterial color={filbotColors.Base} />
+                    {decalTexture && 
+                      <Decal
+                        debug={false}
+                        position={[0.65, 0.8, 0.8]}
+                        rotation={[-Math.PI / 4, 0, 0]}
+                        scale={0.4}
+                      >
+                        <meshBasicMaterial
+                          map={decalTexture}
+                          transparent
+                          polygonOffset
+                          polygonOffsetFactor={-1}
+                        />
+                      </Decal>
+                    }
                   </mesh>
                   <group
                     name="Cylinder005_20"

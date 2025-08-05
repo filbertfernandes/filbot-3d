@@ -17,6 +17,10 @@ const Customize = () => {
     const eyelidLeftSliderRef = useRef()
     const eyelidRightSliderRef = useRef()
 
+    const isNeedSticker = useAppStore((state) => state.isNeedSticker)
+    const setNeedSticker = useAppStore((state) => state.setNeedSticker)
+    const setStickerTexture = useAppStore((state) => state.setStickerTexture)
+
     const handleColorChange = (part, color) => {
         setFilbotColors({
             ...filbotColors,
@@ -147,6 +151,45 @@ const Customize = () => {
                     </div>
                 </div>
 
+                {/* Upload Image Texture */}
+                <div className="flex items-center mb-2">
+                    <input
+                        id="stop-blinking"
+                        type="checkbox"
+                        className="w-5 h-5 cursor-pointer mr-2"
+                        onChange={(e) => setNeedSticker(e.target.checked)}
+                    />
+                    <label className="text-sm md:text-base" htmlFor="stop-blinking">
+                        Sticker Image
+                    </label>
+                </div>
+                <div className="mb-6">
+                    <input
+                        type="file"
+                        accept="image/*"
+                        id="upload-image"
+                        disabled={!isNeedSticker}
+                        onChange={(e) => {
+                        const file = e.target.files[0]
+                        if (!file) return
+
+                        const reader = new FileReader()
+                        reader.onload = (event) => {
+                            setStickerTexture(event.target.result)
+                        }
+                        reader.readAsDataURL(file)
+                        }}
+                        className="block w-full text-sm text-gray-300 file:mr-4 file:py-2 file:px-4
+                                    file:rounded-md file:border-0
+                                    file:text-sm file:font-semibold
+                                    file:bg-emerald-600 file:text-white
+                                    hover:file:bg-emerald-700
+                                    cursor-pointer
+                                    disabled:cursor-not-allowed
+                                    disabled:opacity-50
+                                    "
+                    />
+                </div>
             
                 {/* Buttons */}
                 <div className="flex justify-between text-sm md:text-base">

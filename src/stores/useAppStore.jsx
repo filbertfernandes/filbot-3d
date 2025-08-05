@@ -21,6 +21,8 @@ export const useAppStore = create((set) => ({
   isStopBlinking: false,
   eyelidLeftMorph: 0,
   eyelidRightMorph: 0,
+  isNeedSticker: false,
+  stickerTexture: null,
 
   setPhase: (phase) => {
     window.scrollTo(0, 0);
@@ -57,5 +59,17 @@ export const useAppStore = create((set) => ({
     set(() => {
       return { eyelidRightMorph }
     })
+  },
+
+  setNeedSticker: (isNeedSticker) => {
+    set(() => {
+      return { isNeedSticker };
+    });
+  },
+
+  setStickerTexture: (stickerTexture) => {
+    set(() => {
+      return { stickerTexture };
+    });
   },
 }));

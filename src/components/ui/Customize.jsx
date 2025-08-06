@@ -67,8 +67,8 @@ const Customize = () => {
         <>
             <div
                 className={`absolute z-10 bg-gray-950 text-white py-4 px-6 rounded-2xl shadow-xl font-poppins border border-gray-700 transition-opacity duration-500 
-                    top-6 left-1/2 -translate-x-1/2 h-1/3 overflow-y-auto
-                    md:top-1/2 md:right-20 md:left-auto md:translate-x-0 md:-translate-y-1/2 md:w-1/4 w-[90%] md:h-4/5
+                    top-6 left-1/2 -translate-x-1/2 h-[35%] overflow-y-auto w-[90%]
+                    md:top-1/2 md:right-6 md:left-auto md:translate-x-0 md:-translate-y-1/2 md:w-1/3 md:h-4/5
                     ${phase === phases.CUSTOMIZE ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
                 `}
             >

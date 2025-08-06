@@ -1,6 +1,6 @@
 const Credits = () => {
   return (
-    <div className="fixed bottom-4 left-4 z-10 text-gray-300 text-xs bg-black/50 px-3 py-2 rounded-lg backdrop-blur-sm max-w-xs">
+    <div className="fixed bottom-4 left-4 z-10 text-gray-300 text-[0.7rem] bg-black/50 px-3 py-2 rounded-lg backdrop-blur-sm max-w-xs md:text-xs">
       <p className="leading-relaxed">
         Developed by{' '}
         <a href="https://filbert-fernandes-portfolio.vercel.app/" className="underline font-medium" target="_blank" rel="noopener noreferrer">Filbert Fernandes</a>.{' '}

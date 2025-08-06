@@ -23,6 +23,7 @@ export const useAppStore = create((set) => ({
   eyelidRightMorph: 0,
   isNeedSticker: false,
   stickerTexture: null,
+  activeFeatureIndex: 0,
 
   setPhase: (phase) => {
     window.scrollTo(0, 0);
@@ -72,4 +73,24 @@ export const useAppStore = create((set) => ({
       return { stickerTexture };
     });
   },
+
+  setActiveFeatureIndex: (activeFeatureIndex) => {
+    set(() => {
+      return { activeFeatureIndex };
+    });
+  },
+
+  incrementActiveFeatureIndex: () => {
+    set((state) => {
+      const newActiveFeatureIndex = state.activeFeatureIndex !== 6 ? state.activeFeatureIndex + 1 : 0
+      return { activeFeatureIndex: newActiveFeatureIndex };
+    });
+  },
+
+  decrementActiveFeatureIndex: () => {
+    set((state) => {
+      const newActiveFeatureIndex = state.activeFeatureIndex !== 0 ? state.activeFeatureIndex - 1 : 0
+      return { activeFeatureIndex: newActiveFeatureIndex };
+    });
+  }
 }));

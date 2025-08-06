@@ -8,6 +8,7 @@ import { cameraPosition, controlsTarget, mobileCameraPosition, mobileControlsTar
 import DeliverScene from './DeliverScene'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useMediaQuery } from 'react-responsive'
+import FeatureMarkers from './FeatureMarkers'
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -99,6 +100,7 @@ export default function Experience() {
 
       <Robot />
       <DeliverScene />
+      <FeatureMarkers />
 
       <mesh rotation={[-Math.PI / 2, 0, 0]} >
         <planeGeometry args={[200, 200]} />

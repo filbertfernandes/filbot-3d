@@ -1,7 +1,7 @@
 export const features = [
     {
       name: "Antenna",
-      position: [-1.5, 4.5, 0],
+      position: [-1.55, 4.55, 0],
       image: "/images/antenna.webp",
       title: "HyperWave Signal Receiver",
       description:
@@ -9,7 +9,7 @@ export const features = [
     },
     {
       name: "Eyes",
-      position: [-0.03, 3.8, 1.2],
+      position: [-0.08, 3.85, 1.2],
       image: "/images/eyes.webp",
       title: "Emotion-Aware Optic Sensors",
       description:
@@ -17,7 +17,7 @@ export const features = [
     },
     {
       name: "Arms",
-      position: [1.6, 2.8, 0],
+      position: [1.55, 2.86, 0],
       image: "/images/arms.webp",
       title: "Multi-Purpose Servo Arms",
       description:
@@ -25,7 +25,7 @@ export const features = [
     },
     {
       name: "Chest Panel",
-      position: [-0.5, 2.25, 1.05],
+      position: [-0.55, 2.3, 1.05],
       image: "/images/chest-panel.webp",
       title: "Touchscreen Control Interface",
       description:
@@ -33,7 +33,7 @@ export const features = [
     },
     {
       name: "Circuit Panel",
-      position: [0.6, 2, 1],
+      position: [0.55, 2.05, 1],
       image: "/images/circuit-panel.webp",
       title: "Open Hardware Hub",
       description:
@@ -41,7 +41,7 @@ export const features = [
     },
     {
       name: "Body Core",
-      position: [0, 1.6, 1.05],
+      position: [-0.05, 1.65, 1.05],
       image: "/images/body-core.webp",
       title: "Quantum-Core Power Source",
       description:
@@ -49,7 +49,7 @@ export const features = [
     },
     {
       name: "Wheels",
-      position: [-0.9, 0.5, 1.1],
+      position: [-0.95, 0.55, 1.1],
       image: "/images/wheels.webp",
       title: "OmniDrive Navigation System",
       description:

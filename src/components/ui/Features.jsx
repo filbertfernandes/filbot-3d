@@ -29,7 +29,7 @@ const Features = () => {
             
                     {/* Image */}
                     <div className='flex gap-4 items-center w-full mb-2 md:flex-col'>
-                        <div className="w-1/2 bg-gray-800 rounded-xl overflow-hidden flex items-center justify-center md:w-full">
+                        <div className="w-1/2 bg-gray-800 rounded-xl overflow-hidden flex items-center justify-center md:w-3/4">
                             <img
                                 src={features[activeFeatureIndex].image}
                                 alt={features[activeFeatureIndex].name}

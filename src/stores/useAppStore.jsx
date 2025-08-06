@@ -89,7 +89,7 @@ export const useAppStore = create((set) => ({
 
   decrementActiveFeatureIndex: () => {
     set((state) => {
-      const newActiveFeatureIndex = state.activeFeatureIndex !== 0 ? state.activeFeatureIndex - 1 : 0
+      const newActiveFeatureIndex = state.activeFeatureIndex !== 0 ? state.activeFeatureIndex - 1 : 6
       return { activeFeatureIndex: newActiveFeatureIndex };
     });
   }

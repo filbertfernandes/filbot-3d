@@ -18,7 +18,7 @@ const Features = () => {
                     ${phase === phases.FEATURES ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
                 `}
             >
-                <div>
+                <div className='min-h-[280px] max-h-[280px] md:min-h-[475px] md:max-h-[450px]'>
                     {/* Go back button */}
                     <button
                         onClick={() => useAppStore.getState().setPhase(phases.HOME)}
@@ -38,7 +38,7 @@ const Features = () => {
                         </div>
 
                         {/* Title */}
-                        <h2 className="text-base font-semibold md:text-lg">
+                        <h2 className="w-1/2 text-base font-semibold md:text-lg md:w-auto text-center">
                             {features[activeFeatureIndex].title}
                         </h2>
                     </div>

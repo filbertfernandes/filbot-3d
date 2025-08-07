@@ -55,7 +55,7 @@ const Home = () => {
           className="w-[90%] pt-8 md:w-1/2 md:pt-0"
         >
           <h1 className="text-3xl font-bold leading-tight mb-2 md:mb-6 md:text-5xl">
-            Meet, <span className="text-emerald-400">FILBOT</span>.
+            Meet <span className="text-emerald-400">FILBOT</span>.
           </h1>
 
           <p className="text-gray-300 text-sm leading-relaxed mb-4 md:mb-8 md:text-lg">

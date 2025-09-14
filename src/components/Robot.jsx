@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useGLTF, useAnimations, useTexture, Decal } from '@react-three/drei'
+import { useGLTF, useAnimations, Decal } from '@react-three/drei'
 import { phases, useAppStore } from '../stores/useAppStore'
 import { DoubleSide, LoopOnce, Clock, TextureLoader } from 'three'
 import { useFrame, useThree } from '@react-three/fiber'
